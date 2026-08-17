@@ -2274,8 +2274,156 @@ if (
     );
 
 }
+// ============================================
+// NOTIFICATIONS
+// ============================================
+
+async function requestNotificationPermission() {
+
+    if (!("Notification" in window)) {
+
+        alert(
+            "This browser does not support notifications."
+        );
+
+        return false;
+    }
 
 
+    if (Notification.permission === "granted") {
+        return true;
+    }
+
+
+    if (Notification.permission === "denied") {
+
+        alert(
+            "Notifications are blocked. Enable them in your browser settings."
+        );
+
+        return false;
+    }
+
+
+    const permission =
+        await Notification.requestPermission();
+
+
+    return permission === "granted";
+
+}
+
+setTimeout(() => {
+
+    if (Notification.permission === "granted") {
+
+        new Notification("My Productivity", {
+            body: "Notifications are working! 🔔"
+        });
+
+    } else {
+
+        console.log(
+            "Notification permission:",
+            Notification.permission
+        );
+
+    }
+
+}, 3000);
+// ============================================
+// TEST PWA NOTIFICATION
+// ============================================
+
+async function testNotification() {
+
+    console.log(
+        "Notification permission:",
+        Notification.permission
+    );
+
+
+    if (!("Notification" in window)) {
+
+        console.log(
+            "Notification API not supported"
+        );
+
+        return;
+
+    }
+
+
+    if (Notification.permission !== "granted") {
+
+        console.log(
+            "Notification permission is not granted"
+        );
+
+        return;
+
+    }
+
+
+    if (!("serviceWorker" in navigator)) {
+
+        console.log(
+            "Service Worker not supported"
+        );
+
+        return;
+
+    }
+
+
+    try {
+
+        const registration =
+            await navigator.serviceWorker.ready;
+
+
+        console.log(
+            "Service Worker ready:",
+            registration
+        );
+
+
+        await registration.showNotification(
+            "My Productivity",
+            {
+                body: "PWA notifications are working! 🔔",
+                icon: "./icon-192.png",
+                badge: "./icon-192.png",
+                tag: "notification-test"
+            }
+        );
+
+
+        console.log(
+            "Notification sent successfully"
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Notification failed:",
+            error
+        );
+
+    }
+
+}
+
+
+setTimeout(
+    testNotification,
+    3000
+);
+// Ask for notification permission
+// when the app is first opened.
+
+requestNotificationPermission();
 // ============================================
 // INITIALIZE APP
 // ============================================
