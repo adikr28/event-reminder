@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Productivity</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<link rel="manifest" href="manifest.json">
+
+<meta name="theme-color" content="#000000">
+
+<meta
+    name="mobile-web-app-capable"
+    content="yes"
+>
+
+<meta
+    name="apple-mobile-web-app-capable"
+    content="yes"
+>
+
+<meta
+    name="apple-mobile-web-app-status-bar-style"
+    content="black"
+>
+<body>
+
+<div class="app">
+
+    <!-- Header -->
+    <header class="header">
+
+        <div>
+            <h1>My Productivity</h1>
+            <p>Events, habits and daily progress.</p>
+        </div>
+
+        <button id="themeBtn" class="theme-btn" title="Toggle dark mode">
+            🌙
+        </button>
+
+    </header>
+
+
+    <!-- Navigation -->
+    <nav class="tabs">
+
+        <button class="tab active" data-tab="events">
+            📅 Events
+        </button>
+
+        <button class="tab" data-tab="habits">
+            🔥 Habits
+        </button>
+
+    </nav>
+    
+
+    <!-- ================= EVENTS ================= -->
+
+    <section id="events" class="tab-content active">
+
+        <div class="section-top">
+
+            <div>
+                <h2>Upcoming Events</h2>
+                <p>Don't miss anything important.</p>
+            </div>
+
+            <button id="addEventBtn" class="primary-btn">
+                + Add Event
+            </button>
+
+        </div>
+
+
+        <!-- Event Form -->
+
+        <div id="eventForm" class="form-card hidden">
+
+            <h3>Add New Event</h3>
+
+            <form id="form">
+
+                <label>Event Name</label>
+
+                <input
+                    type="text"
+                    id="eventName"
+                    placeholder="e.g. SQL Revision"
+                    required
+                >
+
+
+                <div class="form-row">
+
+                    <div>
+                        <label>Date</label>
+
+                        <input
+                            type="date"
+                            id="eventDate"
+                            required
+                        >
+                    </div>
+
+                    <div>
+                        <label>Time</label>
+
+                        <input
+                            type="time"
+                            id="eventTime"
+                            required
+                        >
+                    </div>
+
+                </div>
+
+
+                <label>Reminder</label>
+
+                <select id="reminder">
+
+                    <option value="0">At event time</option>
+                    <option value="5">5 minutes before</option>
+                    <option value="15">15 minutes before</option>
+                    <option value="30" selected>30 minutes before</option>
+                    <option value="60">1 hour before</option>
+                    <option value="1440">1 day before</option>
+
+                </select>
+
+
+                <label>Notes</label>
+
+                <textarea
+                    id="eventNotes"
+                    placeholder="Optional notes..."
+                ></textarea>
+
+
+                <div class="form-actions">
+
+                    <button
+                        type="button"
+                        id="cancelBtn"
+                        class="secondary-btn"
+                    >
+                        Cancel
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="primary-btn"
+                    >
+                        Save Event
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+<!-- ================= EDIT EVENT ================= -->
+
+<div id="editEventForm" class="form-card hidden">
+
+    <h3>Edit Event</h3>
+
+    <form id="editEventFormElement">
+
+        <input
+            type="hidden"
+            id="editEventId"
+        >
+
+        <label>Event Name</label>
+
+        <input
+            type="text"
+            id="editEventName"
+            required
+        >
+
+        <div class="form-row">
+
+            <div>
+                <label>Date</label>
+
+                <input
+                    type="date"
+                    id="editEventDate"
+                    required
+                >
+            </div>
+
+            <div>
+                <label>Time</label>
+
+                <input
+                    type="time"
+                    id="editEventTime"
+                    required
+                >
+            </div>
+
+        </div>
+
+        <label>Reminder</label>
+
+        <select id="editReminder">
+
+            <option value="0">At event time</option>
+            <option value="5">5 minutes before</option>
+            <option value="15">15 minutes before</option>
+            <option value="30">30 minutes before</option>
+            <option value="60">1 hour before</option>
+            <option value="1440">1 day before</option>
+
+        </select>
+
+        <label>Notes</label>
+
+        <textarea
+            id="editEventNotes"
+            placeholder="Optional notes..."
+        ></textarea>
+
+        <div class="form-actions">
+
+            <button
+                type="button"
+                id="cancelEditEventBtn"
+                class="secondary-btn"
+            >
+                Cancel
+            </button>
+
+            <button
+                type="submit"
+                class="primary-btn"
+            >
+                Save Changes
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+        <!-- Event List -->
+
+        <div id="eventsContainer" class="items-container">
+
+            <div id="emptyEvents" class="empty-state">
+
+                <div>📅</div>
+
+                <h3>No events yet</h3>
+
+                <p>Add your first event.</p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+<!-- ================= HABITS ================= -->
+
+<section id="habits" class="tab-content">
+
+    <div class="section-top">
+
+        <div>
+            <h2>Habit Tracker</h2>
+            <p>Build consistency one day at a time.</p>
+        </div>
+
+        <button id="addHabitBtn" class="primary-btn">
+            + Add Habit
+        </button>
+
+    </div>
+
+
+    <!-- Habit Form -->
+
+    <div id="habitForm" class="form-card hidden">
+
+        <h3>Add New Habit</h3>
+
+        <form id="habitFormElement">
+
+            <label>Habit Name</label>
+
+            <input
+                type="text"
+                id="habitName"
+                placeholder="e.g. SQL Practice"
+                required
+            >
+
+            <label>Icon</label>
+
+            <input
+                type="text"
+                id="habitIcon"
+                placeholder="💻"
+                maxlength="2"
+            >
+
+            <div class="form-actions">
+
+                <button
+                    type="button"
+                    id="cancelHabitBtn"
+                    class="secondary-btn"
+                >
+                    Cancel
+                </button>
+
+                <button
+                    type="submit"
+                    class="primary-btn"
+                >
+                    Save Habit
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+<!-- Edit Habit Form -->
+
+<div id="editHabitForm" class="form-card hidden">
+
+    <h3>Edit Habit</h3>
+
+    <form id="editHabitFormElement">
+
+        <input
+            type="hidden"
+            id="editHabitId"
+        >
+
+        <label>Habit Name</label>
+
+        <input
+            type="text"
+            id="editHabitName"
+            required
+        >
+
+        <label>Icon</label>
+
+        <input
+            type="text"
+            id="editHabitIcon"
+            maxlength="2"
+        >
+
+        <div class="form-actions">
+
+            <button
+                type="button"
+                id="cancelEditHabitBtn"
+                class="secondary-btn"
+            >
+                Cancel
+            </button>
+
+            <button
+                type="submit"
+                class="primary-btn"
+            >
+                Save Changes
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+    <!-- Monthly Summary -->
+
+    <div class="habit-summary">
+
+        <div>
+            <span id="currentMonth"></span>
+
+            <strong id="monthProgress">
+                0%
+            </strong>
+        </div>
+
+        <div class="summary-bar">
+
+            <div id="monthProgressFill"></div>
+
+        </div>
+
+    </div>
+<!-- Habit Statistics -->
+
+<div class="habit-stats">
+
+    <div class="stat-card">
+        <span>🔥</span>
+        <small>Current Streak</small>
+        <strong id="currentStreak">0 days</strong>
+    </div>
+
+    <div class="stat-card">
+        <span>🏆</span>
+        <small>Best Streak</small>
+        <strong id="bestStreak">0 days</strong>
+    </div>
+
+    <div class="stat-card">
+        <span>✓</span>
+        <small>Completed</small>
+        <strong id="totalCompleted">0 days</strong>
+    </div>
+
+</div>
+
+
+<!-- Individual Habit Statistics -->
+
+<div
+    id="habitStatsContainer"
+    class="habit-stats-list"
+></div>
+
+    <!-- Habit Tracker -->
+
+    <div class="tracker-wrapper">
+
+        <div
+            id="habitTracker"
+            class="habit-tracker"
+        ></div>
+
+    </div>
+
+
+    <!-- Empty State -->
+
+    <div
+        id="emptyHabits"
+        class="empty-state"
+    >
+
+        <div>🔥</div>
+
+        <h3>No habits yet</h3>
+
+        <p>
+            Add your first habit to start tracking.
+        </p>
+
+    </div>
+
+</section>
+
+
+</div>
+
+
+<script src="script.js"></script>
+
+</body>
+</html>
+
