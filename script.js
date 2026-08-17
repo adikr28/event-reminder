@@ -616,6 +616,160 @@ function getCountdown(eventDate) {
 
 }
 // ============================================
+// EVENT REMINDER ENGINE
+// ============================================
+
+const notifiedEvents =
+    JSON.parse(
+        localStorage.getItem("notifiedEvents")
+    ) || [];
+
+
+// --------------------------------------------
+// CHECK EVENT REMINDERS
+// --------------------------------------------
+
+async function checkEventReminders() {
+
+    if (
+        !("Notification" in window) ||
+        Notification.permission !== "granted"
+    ) {
+        return;
+    }
+
+
+    if (!("serviceWorker" in navigator)) {
+        return;
+    }
+
+
+    const registration =
+        await navigator.serviceWorker.ready;
+
+
+    const now =
+        new Date();
+
+
+    events.forEach(event => {
+
+        const eventDate =
+            new Date(
+                `${event.date}T${event.time}`
+            );
+
+
+        const reminderMinutes =
+            Number(event.reminder) || 0;
+
+
+        const reminderTime =
+            new Date(
+                eventDate.getTime() -
+                reminderMinutes *
+                60 *
+                1000
+            );
+
+
+        const notificationId =
+            `${event.id}-${event.reminder}`;
+
+
+        // Already notified
+
+        if (
+            notifiedEvents.includes(
+                notificationId
+            )
+        ) {
+            return;
+        }
+
+
+        // Reminder is due
+
+        if (
+            now >= reminderTime &&
+            now < eventDate
+        ) {
+
+            let message;
+
+
+            if (reminderMinutes === 0) {
+
+                message =
+                    `${event.name} is starting now.`;
+
+            } else if (
+                reminderMinutes < 60
+            ) {
+
+                message =
+                    `${event.name} starts in ${reminderMinutes} minutes.`;
+
+            } else {
+
+                const hours =
+                    reminderMinutes / 60;
+
+                message =
+                    `${event.name} starts in ${hours} hour${hours === 1 ? "" : "s"}.`;
+
+            }
+
+
+            await registration.showNotification(
+                "🔔 My Productivity",
+                {
+
+                    body: message,
+
+                    icon: "./icon-192.png",
+
+                    badge: "./icon-192.png",
+
+                    tag: notificationId,
+
+                    requireInteraction: true,
+
+                    data: {
+                        eventId: event.id
+                    }
+
+                }
+            );
+
+
+            notifiedEvents.push(
+                notificationId
+            );
+
+
+            localStorage.setItem(
+                "notifiedEvents",
+                JSON.stringify(
+                    notifiedEvents
+                )
+            );
+
+        }
+
+    });
+
+}
+// Check immediately
+checkEventReminders();
+
+
+// Check every 30 seconds
+setInterval(
+    checkEventReminders,
+    30 * 1000
+);
+// ============================================
 // DELETE EVENT
 // ============================================
 
@@ -2331,95 +2485,8 @@ setTimeout(() => {
     }
 
 }, 3000);
-// ============================================
-// TEST PWA NOTIFICATION
-// ============================================
-
-async function testNotification() {
-
-    console.log(
-        "Notification permission:",
-        Notification.permission
-    );
 
 
-    if (!("Notification" in window)) {
-
-        console.log(
-            "Notification API not supported"
-        );
-
-        return;
-
-    }
-
-
-    if (Notification.permission !== "granted") {
-
-        console.log(
-            "Notification permission is not granted"
-        );
-
-        return;
-
-    }
-
-
-    if (!("serviceWorker" in navigator)) {
-
-        console.log(
-            "Service Worker not supported"
-        );
-
-        return;
-
-    }
-
-
-    try {
-
-        const registration =
-            await navigator.serviceWorker.ready;
-
-
-        console.log(
-            "Service Worker ready:",
-            registration
-        );
-
-
-        await registration.showNotification(
-            "My Productivity",
-            {
-                body: "PWA notifications are working! 🔔",
-                icon: "./icon-192.png",
-                badge: "./icon-192.png",
-                tag: "notification-test"
-            }
-        );
-
-
-        console.log(
-            "Notification sent successfully"
-        );
-
-
-    } catch (error) {
-
-        console.error(
-            "Notification failed:",
-            error
-        );
-
-    }
-
-}
-
-
-setTimeout(
-    testNotification,
-    3000
-);
 // ============================================
 // SERVICE WORKER
 // ============================================
